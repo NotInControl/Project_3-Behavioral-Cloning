@@ -1,8 +1,8 @@
-#**Behavioral Cloning** 
+# **Behavioral Cloning** 
+## Kevin Harrilal
+## Writeup Template
 
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
 
 ---
 
@@ -16,6 +16,8 @@ The goals / steps of this project are the following:
 * Summarize the results with a written report
 
 
+
+
 [//]: # (Image References)
 
 [image1]: ./examples/placeholder.png "Model Visualization"
@@ -26,33 +28,58 @@ The goals / steps of this project are the following:
 [image6]: ./examples/placeholder_small.png "Normal Image"
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 
+
+02_histogram_unmodified_data
+03_data_augmentation_flip
+04_data_augmentation_flip_histogram
+05_data_viz
+06__Keras_Model
+06__Nvidia_Model
+08_train_model
+09_model_history
+
 ## Rubric Points
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
+### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-###Files Submitted & Code Quality
+### Files Submitted & Code Quality
 
-####1. Submission includes all required files and can be used to run the simulator in autonomous mode
+#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py containing the script to create and train the model
+* network.ipynb containing the script to create and train the model
 * drive.py for driving the car in autonomous mode
 * model.h5 containing a trained convolution neural network 
 * writeup_report.md or writeup_report.pdf summarizing the results
 
-####2. Submission includes functional code
+#### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
-```sh
+```
+source activate carnd-term1
 python drive.py model.h5
 ```
 
-####3. Submission code is usable and readable
+#### 3. Submission code is usable and readable
 
-The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+The network.ipynb file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
-###Model Architecture and Training Strategy
+The notebook is written so that it can easily be followed:
+
+The first part loads in the data. The data is a combination of the Udacity data, and two different sets of data that I captured on my own from driving around the track. The driving was done on track 1, both forwards and backwards, and using the Udacity recommendation of also capturing a lane of recovery. 
+
+The model played with mixing the data, and had a datset ranging from a few thousand to over 70,000 images before augmentation. To have a good match of data, and not max out the computers memory, and final dataset of around 24,000 images were used. 
+
+The dataset includes all three camera angles. 
+
+![alt_text](writeup_images/01_unmodified_dataSize.png)
+
+After the data is loaded into the 
+
+### Model Architecture and Training Strategy
 
 ####1. An appropriate model architecture has been employed
+The model architecture made use of the NVIDIA 
+
 
 My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
 
