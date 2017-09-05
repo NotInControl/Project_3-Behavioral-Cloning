@@ -29,7 +29,7 @@ The goals / steps of this project are the following:
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 
 
-02_histogram_unmodified_data
+
 03_data_augmentation_flip
 04_data_augmentation_flip_histogram
 05_data_viz
@@ -69,11 +69,15 @@ The first part loads in the data. The data is a combination of the Udacity data,
 
 The model played with mixing the data, and had a datset ranging from a few thousand to over 70,000 images before augmentation. To have a good match of data, and not max out the computers memory, and final dataset of around 24,000 images were used. 
 
-The dataset includes all three camera angles. 
+The dataset includes all three camera angles. And an offset steering angle of 0.2 degrees is used with relation to the center image.
 
-![alt_text](writeup_images/01_unmodified_dataSize.png)
+![alt_text](writeup_images/01_unmodified_dataSize.PNG)
 
-After the data is loaded into the 
+We also look at the histogram of the data in order to view its correlation to the angles captured. 
+![alt_text](writeup_images/02_histogram_unmodified_data.PNG)
+
+
+After the data is loaded into the the notebook, it is ran through some pre-processing. To augment the data
 
 ### Model Architecture and Training Strategy
 
