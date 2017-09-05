@@ -28,7 +28,7 @@ The goals / steps of this project are the following:
 [image6]: ./examples/placeholder_small.png "Normal Image"
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 
-
+https://youtu.be/Uav6DDdNFPs
 
 03_data_augmentation_flip
 04_data_augmentation_flip_histogram
