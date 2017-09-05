@@ -73,11 +73,15 @@ The dataset includes all three camera angles. And an offset steering angle of 0.
 
 ![alt_text](writeup_images/01_unmodified_dataSize.PNG)
 
-We also look at the histogram of the data in order to view its correlation to the angles captured. 
+We also look at the histogram of the data in order to view its correlation to the angles captured. In the histogram we can see there are three peaks 1. At 0 degrees, this makes sense because a lot of the time we are driving without any steering correction. 2. 
 ![alt_text](writeup_images/02_histogram_unmodified_data.PNG)
 
 
-After the data is loaded into the the notebook, it is ran through some pre-processing. To augment the data
+After the data is loaded into the the notebook, it is ran through some pre-processing. To augment the data each frame is flipped about the horizontal axis using openCV and the angle is negated. This acts to double the number of datapoints, and training values used. 
+
+![alt_text](writeup_images/03_data_augmentation_flip.PNG)
+
+A Histogram of the augmented data is then shown in the notebook. We can see the histogram is similar to the first, however with more datapoints. Essentially the flip operation helps to multiply the data. 
 
 ### Model Architecture and Training Strategy
 
