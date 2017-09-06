@@ -36,12 +36,12 @@ Here is a quick video displaying the final results of the model driving along th
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 My project includes the following files:
 
-* network.ipynb containing the script to create and train the model
+* network.ipynb containing the script to create and train the model (for all intensive purposes this is model.py) I choose to use a IPYNB because the model was trained using Amazon EC2 and it was easier to remotely interface and debug a Jupyter notebook
 * drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+* model.h5 containing a trained convolution neural network produced by network.ipynb
+* KH_writeup_report.md or writeup_report.pdf summarizing the results
 
-#### 2. Submission includes functional codeUsing the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
+#### 2. Submission includes functional code. Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 
 ```
 source activate carnd-term1
