@@ -274,6 +274,9 @@ There were over 70,000 images, and then as described above the data went through
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
+#### Fit Generator
+A Fit generator was not used because the entire model dataset fit within the comuteres specs of 64GB memory. Trained on GPUs
+
 #### 2. Final Model Architecture
 
 | Layer         		|     Description	        					| 
