@@ -209,7 +209,7 @@ The model includes ELU layers to introduce nonlinearity. The model orignally use
 
 The model is based off the NVIDIA Model which has 5 convolutional layers followed by 4 fully connected layers pictured here:
 
-![alt_text](writeup_images/06_Nvidia_Model.png)
+![alt_text](writeup_images/06__Nvidia_Model.png)
 
 
 #### 2. Attempts to reduce overfitting in the model
