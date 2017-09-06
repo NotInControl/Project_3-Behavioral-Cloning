@@ -25,7 +25,7 @@ The goals / steps of this project are the following:
 
 Here is a quick video displaying the final results of the model driving along the track. I had some issues using the save feature built in to drive.py, so this was recorded using screen capture instead, and also shows the live angle and speed output. Higher resolution video can be found in the track1_autonomous.mp4 video contained in the repository.
 
-![IMAGE ALT TEXT HERE]((writeup_images/ezgif.com-video-to-gif.gif)
+![IMAGE](writeup_images/ezgif.com-video-to-gif.gif)
 
 
 ## Rubric Points
