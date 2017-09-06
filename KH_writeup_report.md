@@ -45,7 +45,8 @@ My project includes the following files:
 
 ```
 source activate carnd-term1
-python drive.py model.h5```
+python drive.py model.h5
+```
 
 #### 3. Submission code is usable and readable
 
