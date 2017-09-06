@@ -23,12 +23,12 @@ The goals / steps of this project are the following:
 
 # Results
 
-Here is a quick video displaying the final results of the model driving along the track. I had some issues using the save feature built in to drive.py, so this was recorded using screen capture instead, and also shows the live angle and speed output. 
+Here is a quick video displaying the final results of the model driving along the track. I had some issues using the save feature built in to drive.py, so this was recorded using screen capture instead, and also shows the live angle and speed output. Higher resolution video can be found in the track1_autonomous.mp4 video contained in the repository.
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/Uav6DDdNFPs/0.jpg)](https://www.youtube.com/watch?v=Uav6DDdNFPs)
+[![IMAGE ALT TEXT HERE]((writeup_images/ezgif.com-video-to-gif.gif)
 
 
-06__Keras_Model
+
 08_train_model09_model_history
 
 ## Rubric Points
@@ -108,7 +108,8 @@ After the data is loaded into the the notebook, it is ran through some pre-proce
 
 1. Random Shaowing
 2. Flip about X
-3. Cropping
+3. Pixel Normalization
+4. Cropping
 
 
 ### Random Shadowing
@@ -154,53 +155,161 @@ The track has mostly left turns, but to help it generalize we did two things, dr
 1. Helps simulate additional views
 2. Inverts the shadowing so shadows also appear on the right side, even through our algorithm only 
 
+We flip every image in our dataset, doubleling our dataset once more, but keeping the distribution nearly normalized.
+
+The code to do the flip is:
+
+```
+augmented_images, augmented_measurements = [],[]
+
+for image, measurement in zip(X_train, y_train):
+        augmented_images.append(image)
+        augmented_measurements.append(measurement)
+        augmented_images.append(cv2.flip(image,1))
+        augmented_measurements.append(measurement*-1.0)
+
+X_train = np.array(augmented_images)
+y_train = np.array(augmented_measurements)
+```
+
+An example of a flip is shown below:
+
+![alt_text](writeup_images/05_data_flip.PNG)
+
+The final dataset size and histogram is:
+![alt_text](writeup_images/05_final_datasize.PNG)
+![alt_text](writeup_images/05_final_hist.PNG)
 
 
-the data each frame is flipped about the horizontal axis using openCV and the angle is negated. This acts to double the number of datapoints, and training values used. 
-![alt_text](writeup_images/03_data_augmentation_flip.PNG)
-A Histogram of the augmented data is then shown in the notebook. We can see the histogram is similar to the first, however with more datapoints. Essentially the flip operation helps to multiply the data. 
-![alt_text](writeup_images/04_data_augmentation_flip_histogram.PNG)
-We can see the histogram didn't change much other than the magnitude of each dataset, Which has essentially doublled with all of the flipped images. 
-Below are some screen shots of what the images looked like: 
+And some images in the final dataset with their measurements:
 ![alt_text](writeup_images/05_data_viz.PNG)
+
+### Pixel Normalization
+The first step in the Kera model is to normalize the pixel values and get a zero mean we do this with:
+```
+model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
+```
+
+### Cropping
+The last image processing is actually done inside of the model, and effectively crops the top and bottom off the image. The purpose of this layer is to remove the sky and hood form the images so that the network doesn't learn bad features.
+
+as can be see from the Keras layer
+```
+model.add(Cropping2D(cropping=((50,20), (0,0))))
+```
+
+We crop the top 50 pixels and the bottom 20 pixels. 
+
 ### Model Architecture and Training Strategy
 ####1. An appropriate model architecture has been employedThe model architecture made use of the NVIDIA 
 The model was largely based on the NVIDIA model. This model was chosen as a starting point because of it's recommendation in class. And it's similar implementation to the LeNEt architecture which we gainedsignificant experience with from the LeNet lab and the traffic sign classifier. 
+
 Here is a high level architecture of the Nvidia model:
-The model includes ELU layers to introduce nonlinearity. But the problem with relu is that it’s mean is not zero. If the mean value of activation is zero you get a faster learning.But if you use just a linear activation function (which would have mean activation zero) your overall network becomes linear and which will effectively be equal to a single layer network and with linear networks there is very little that you can learn from the data, that’s why we use non linear activation functions. Now what ELU does is that it tries to make the mean activation close to zero and as it is an exponential function it does not saturate(I have not used this activation function yet), you can conclude this from ELU graph.
+The model includes ELU layers to introduce nonlinearity. The model orignally used RELU's but the problem with relu is that it’s mean is not zero. If the mean value of activation is zero you get a faster learning.But if you use just a linear activation function (which would have mean activation zero) your overall network becomes linear and which will effectively be equal to a single layer network and with linear networks there is very little that you can learn from the data, that’s why we use non linear activation functions. Now what ELU does is that it tries to make the mean activation close to zero and as it is an exponential function it does not saturate.
+
+The model is based off the NVIDIA Model which has 5 convolutional layers followed by 4 fully connected layers pictured here:
+
+![alt_text](writeup_images/06_Nvidia_Model.PNG)
 
 
 ####2. Attempts to reduce overfitting in the model
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+I augmented the model to contain a dropout layer betwwen the convolutional layers and the fully connected layers in order to reduce overfitting.
+
+The model was trained and validated on different data sets to ensure that the model was not overfitting. 30% of the datset was used for a training set.The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+
+The final architecture is below:
+
+```
+from keras.models import Sequential
+from keras.layers import Flatten, Dense, Lambda, Dropout
+from keras.layers.convolutional import Convolution2D
+from keras.layers import Cropping2D
+
+
+model = Sequential()
+model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(160,320,3)))
+model.add(Cropping2D(cropping=((50,20), (0,0))))
+model.add(Convolution2D(24,5,5, subsample=(2,2), activation='elu'))
+model.add(Convolution2D(36,5,5, subsample=(2,2), activation='elu'))
+model.add(Convolution2D(48,5,5, subsample=(2,2), activation='elu'))
+model.add(Convolution2D(64,3,3, activation='elu'))
+model.add(Convolution2D(64,3,3, activation='elu'))
+model.add(Dropout(0.5))
+model.add(Flatten())
+model.add(Dense(100))
+model.add(Dense(50))
+model.add(Dense(10))
+model.add(Dense(1))
+
+
+model.compile(loss='mse', optimizer='adam')
+history_object = model.fit(X_train, y_train, validation_split=0.3, shuffle=True, nb_epoch=4)
+
+model.save('model.h5')
+```
+
 ####3. Model parameter tuning
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually, as can be seen from the code above. However we did tune two parameters manually. The steering offset for left and right images, and the drop out probability. The final results are:
+
+Steering Angle Offset = 0.2
+Dropout Probability = 0.5
+
+
 ####4. Appropriate training data
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
-For details about how I created the training data, see the next section. 
+Training data was used to help keep the vehicle on the road and allow the model to perform behavioral cloning. The data was generated by driving 4 laps in the center of the lane in the correct direction. 2 laps going around the track backwards. And then two laps of revovery where for each left and right recoveries, where the vehicle was allowd to go off courve and then I correct it back to the center.  
+
+There were over 70,000 images, and then as described above the data went through a pre-processing scheme to augment the data better. 
 ###Model Architecture and Training Strategy
 ####1. Solution Design Approach
-The overall strategy for deriving a model architecture was to ...
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-To combat the overfitting, I modified the model so that ...
-Then I ... 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+
+* History of training
+1. Started with Udacity provided data only and Nvidia unmodified model. Car did not drive more than afew feet before steering off
+2. Recored my own data of about 3 center lane trials. Car made it to the first turn then veered off track. 
+3. Added a cropping layer based on the Udacity project videos, this helped a lot
+4. Added more data by recording more laps, didnt see much improvement, the car could drive most of the lap but still get hung up in random places, also noticed the model overfitting based on the history plot
+5. Implemented a Dropout layer, reduced epochs from 10 to 2. Model drives well, but not around entire track
+6. Added Flip and Shadowing. Car drives around track but does heavy correction.
+7. Normalized data to be more uniform. Increased Epoch to 4. 
+8. Car drives around track satisfactorily. 
+
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+
 ####2. Final Model Architecture
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-![alt text][image1]
+
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 160x320x3 RGB image   							| 
+| Cropping              | remove top 50 and bottom 20 pixels            |
+| Convolution  5x5x24  	| 2x2 stride, valid padding,	|
+| ELU					|												|
+| Convolution  5x5x24  	| 2x2 stride, valid padding,	|
+| ELU					|												|
+| Convolution  5x5x24  	| 2x2 stride, valid padding,	|
+| ELU					|												|
+| Convolution  5x5x24  	| 2x2 stride, valid padding,	|
+| ELU					|												|
+| Dropout					|												|
+| Flatten |  |
+| Fully connected		| output 100  									|
+| Fully connected		| output 50   									|
+| Fully connected		| output 10									| 
+| Fully connected		| outoput 1  									| 
+
+### Final training
+
+The final model training:
+
+![alt_text](writeup_images/08_train_model.PNG)
+
+![alt_text](writeup_images/09_model_history.PNG)
+
+
+
+
 ####3. Creation of the Training Set & Training Process
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
-![alt text][image2]
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-![alt text][image3]![alt text][image4]![alt text][image5]
-Then I repeated this process on track two in order to get more data points.
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-![alt text][image6]![alt text][image7]
-Etc ....
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
-Help Me
+As mentioned above: Training data was used to help keep the vehicle on the road and allow the model to perform behavioral cloning. The data was generated by driving 4 laps in the center of the lane in the correct direction. 2 laps going around the track backwards. And then two laps of revovery where for each left and right recoveries, where the vehicle was allowd to go off courve and then I correct it back to the center.  
+
+There were over 70,000 images, and then as described above the data went through a pre-processing scheme to augment the data better. 
+
+
+The dataset then went through the pre-processing phase as described above. 
