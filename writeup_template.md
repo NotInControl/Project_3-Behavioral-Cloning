@@ -25,11 +25,8 @@ The goals / steps of this project are the following:
 
 Here is a quick video displaying the final results of the model driving along the track. I had some issues using the save feature built in to drive.py, so this was recorded using screen capture instead, and also shows the live angle and speed output. Higher resolution video can be found in the track1_autonomous.mp4 video contained in the repository.
 
-[![IMAGE ALT TEXT HERE]((writeup_images/ezgif.com-video-to-gif.gif)
+![IMAGE ALT TEXT HERE]((writeup_images/ezgif.com-video-to-gif.gif)
 
-
-
-08_train_model09_model_history
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -46,7 +43,9 @@ My project includes the following files:
 
 #### 2. Submission includes functional codeUsing the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 
-```source activate carnd-term1python drive.py model.h5```
+```
+source activate carnd-term1
+python drive.py model.h5```
 
 #### 3. Submission code is usable and readable
 
@@ -73,7 +72,7 @@ To normalize the dataset, we equalize the data but removing excess images so tha
 
 The algorithm divides the angles of the car -1 to +1 into 1000 bins, and determines how many current measurements fall within that range. If the value is over 500 images, the code randomly selects 500 images to keep and discards the rest, if there are less than 500 image for a given meausrement bin, the algorithm keeps all. The point of this is to normalize the data and not have those peaks. The code is in the network.ipynb file but repeated below:
 
-``
+```
 bins = 100                 # N of bins
 bin_n = 500                 # N of examples to include in each bin (at most)
 
